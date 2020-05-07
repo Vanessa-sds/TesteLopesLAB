@@ -97,23 +97,28 @@ ggplot(wine.data, aes(x = qualidade, y = alcohol)) +
   labs(title="Box plot",subtitle = "Álcool por tipo e qualidade do vinho")
 # Modelo de regressão ordinal
 model1 <- polr(qualidade ~ type+fixed.acidity+volatile.acidity+citric.acid+residual.sugar+chlorides+free.sulfur.dioxide+total.sulfur.dioxide+density+pH+sulphates +alcohol, Hess=TRUE)
-## view a summary of the model
+## estimativas do modelo e outras estatísticas
 summary(model1)
 (ctable <- coef(summary(model1)))
 p <- pnorm(abs(ctable[, "t value"]), lower.tail = FALSE) * 2
-## combined table
+## tabela completa (estimativas + p valores)
 (ctable <- cbind(ctable, "p value" = p))
 # modelo sem os regressores não significativos:
 model2 <- polr(y ~ type+volatile.acidity+residual.sugar+chlorides+total.sulfur.dioxide+free.sulfur.dioxide +pH+sulphates+alcohol, Hess=TRUE)
-## view a summary of the model
+## tabela de estimativas
 summary(model2)
 (ctable <- coef(summary(model2)))
-p <- pnorm(abs(ctable[, "t value"]), lower.tail = FALSE) * 2
-## combined table
+p <- pnorm(abs(ctable[, "t value"]), lower.tail = FALSE) * 2 # p valores
+## tabela completa
 (ctable <- cbind(ctable, "p value" = p))
 #razão de chance
 exp(coef(model2))
-# Previsão
+# Matriz de confusão
 predicts = predict(model2,wine.data)
 table(wine.data$quality, predicts)
+p=prop.table(f,margin = 2)*100 # taxas de acerto
+p
+fc=as.character(wine.data$quality) != as.character(predicts)
+taxa=table(fc)/sum(table(fc)) # taxa de erro
+taxa 
 
