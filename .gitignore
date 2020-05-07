@@ -1,39 +1,119 @@
 # History files
-.Rhistory
-.Rapp.history
+rm(list=ls())
+setwd("C:\\Users\\vsds2\\OneDrive\\Área de Trabalho\\TesteLopesLAB")
+#---- Pacotes usados
+# Instalação e carregamento:
+#install.packages("ggplot2")
+library("ggplot2")
+#install.packages("MASS")
+library("MASS")
+#install.packages("ggpubr")
+library("ggpubr")
+# Carregar banco de dados
+data0 <- read.table("winequality.csv",sep = ";",h=T)
+names(data0)
+# Tratamento dos dados
+wine.data<- data.frame(data0)
+attach(wine.data)         # desmembrar variáveis
+str(wine.data)            # detectar os tipos de variáveis
+wine.data$alcohol<-as.numeric(wine.data$alcohol)
+y <- as.factor(wine.data$quality)
+qualidade<- factor(y, levels=c("3", "4","5","6","7","8","9"), ordered=T)
+levels(type)[levels(type)=="Red"] <- "Tinto"
+levels(type)[levels(type)=="White"] <- "Branco"
+wine.data$type<-type
+# Variável qualitativas:
+# type - quantidade de vinho do tipo branco ou tinto
+ftable(type)
+ftable(type)/sum(ftable(type))
+# quality
+ftable(qualidade)
+ftable(qualidade)/sum(ftable(qualidade))
+f=data.frame(ftable(xtabs(~ qualidade + type, data = wine.data)))
+perc=data.frame(prop.table(xtabs(~ qualidade + type, data = wine.data),margin =1 )*100)
+data.graf=data.frame(f[,1],f[,2],f[,3],round(perc[,3],2))
+colnames(data.graf)<-c("qualidade","tipo","n","prop")
+# Gráfico de barras : Qualidade do vinho por tipo
+ggplot(data.graf,aes(x=qualidade,fill=tipo,weights=n))+geom_bar() +labs(y="Frequência", 
+         x="Qualidade",  title="Qualidade do vinho por tipo")+ theme(legend.position = c(0.9, 0.8))+
+  geom_text(data = data.graf, aes(x = qualidade, y = n, label = sprintf("%.02f %%", prop)),  position = position_dodge(width = 0.9), vjust=-0.3)
+# Variável contínuas
+(stats.mat<-data.frame(summary(wine.data[,2:12])))
+#---------Analise cruzada
+#Box plot para cada variável
+# Acidez
+ggplot(wine.data, aes(x = qualidade, y = fixed.acidity)) +
+  geom_boxplot(size = .75) + facet_grid(type) +labs(title="Box plot",subtitle = "Acidez fixa por tipo e qualidade do vinho")+
+  theme(axis.text.x = element_text(angle = 0, hjust = 1, vjust = 1))
+# Volatilidde
+ggplot(wine.data, aes(x = qualidade, y = volatile.acidity)) +
+  geom_boxplot(size = .75) +facet_grid(type) +
+  theme(axis.text.x = element_text(angle = 0, hjust = 1, vjust = 1))+
+  labs(title="Box plot",subtitle = "Volatilidade por tipo e qualidade do vinho")
+# Ácido citrico
+ggplot(wine.data, aes(x = qualidade, y = citric.acid)) +
+  geom_boxplot(size = .75) +facet_grid(type) +
+  theme(axis.text.x = element_text(angle = 0, hjust = 1.5, vjust = 1))+
+  labs(title="Box plot",subtitle = "Ácido citrico por tipo e qualidade do vinho")
+# Açucar residual
+ggplot(wine.data, aes(x = qualidade, y = residual.sugar)) +
+  geom_boxplot(size = .75) +facet_grid(type) +
+  theme(axis.text.x = element_text(angle = 0, hjust = 1.5, vjust = 1))+
+  labs(title="Box plot",subtitle = "Açucar residual por tipo e qualidade do vinho")
+# Cloretos
+ggplot(wine.data, aes(x = qualidade, y = chlorides)) +
+  geom_boxplot(size = .75) +facet_grid(type) +
+  theme(axis.text.x = element_text(angle = 0, hjust = 1.5, vjust = 1))+
+  labs(title="Box plot",subtitle = "Cloretos por tipo e qualidade do vinho")
+# Dióxido de enxofre livre
+ggplot(wine.data, aes(x = qualidade, y = free.sulfur.dioxide)) +
+  geom_boxplot(size = .75) +facet_grid(type) +
+  theme(axis.text.x = element_text(angle = 0, hjust = 1.5, vjust = 1))+
+  labs(title="Box plot",subtitle = "Enxofre Livre por tipo e qualidade do vinho")
+# Dióxido de enxofre total
+ggplot(wine.data, aes(x = qualidade, y = total.sulfur.dioxide)) +
+  geom_boxplot(size = .75) +facet_grid(type) +
+  theme(axis.text.x = element_text(angle = 0, hjust = 1.5, vjust = 1))+
+  labs(title="Box plot",subtitle = "Dióxido de Enxofre Total por tipo e qualidade do vinho")
+# Densidade
+ggplot(wine.data, aes(x = qualidade, y = density)) +
+  geom_boxplot(size = .75) +facet_grid(type) +
+  theme(axis.text.x = element_text(angle = 0, hjust = 1.5, vjust = 1))+
+  labs(title="Box plot",subtitle = "Densidade por tipo e qualidade do vinho")
+# pH
+ggplot(wine.data, aes(x = qualidade, y = pH)) +
+  geom_boxplot(size = .75) +facet_grid(type) +
+  theme(axis.text.x = element_text(angle = 0, hjust = 1.5, vjust = 1))+
+  labs(title="Box plot",subtitle = "pH por tipo e qualidade do vinho")
+# Sulfatos
+ggplot(wine.data, aes(x = qualidade, y = sulphates)) +
+  geom_boxplot(size = .75) +facet_grid(type) +
+  theme(axis.text.x = element_text(angle = 0, hjust = 1.5, vjust = 1))+
+  labs(title="Box plot",subtitle = "Sulfatos por tipo e qualidade do vinho")
+# alcool
+ggplot(wine.data, aes(x = qualidade, y = alcohol)) +
+  geom_boxplot(size = .75) +facet_grid(type) +
+  theme(axis.text.x = element_text(angle = 0, hjust = 1.5, vjust = 1))+
+  labs(title="Box plot",subtitle = "Álcool por tipo e qualidade do vinho")
+# Modelo de regressão ordinal
+model1 <- polr(qualidade ~ type+fixed.acidity+volatile.acidity+citric.acid+residual.sugar+chlorides+free.sulfur.dioxide+total.sulfur.dioxide+density+pH+sulphates +alcohol, Hess=TRUE)
+## view a summary of the model
+summary(model1)
+(ctable <- coef(summary(model1)))
+p <- pnorm(abs(ctable[, "t value"]), lower.tail = FALSE) * 2
+## combined table
+(ctable <- cbind(ctable, "p value" = p))
+# modelo sem os regressores não significativos:
+model2 <- polr(y ~ type+volatile.acidity+residual.sugar+chlorides+total.sulfur.dioxide+free.sulfur.dioxide +pH+sulphates+alcohol, Hess=TRUE)
+## view a summary of the model
+summary(model2)
+(ctable <- coef(summary(model2)))
+p <- pnorm(abs(ctable[, "t value"]), lower.tail = FALSE) * 2
+## combined table
+(ctable <- cbind(ctable, "p value" = p))
+#razão de chance
+exp(coef(model2))
+# Previsão
+predicts = predict(model2,wine.data)
+table(wine.data$quality, predicts)
 
-# Session Data files
-.RData
-
-# User-specific files
-.Ruserdata
-
-# Example code in package build process
-*-Ex.R
-
-# Output files from R CMD build
-/*.tar.gz
-
-# Output files from R CMD check
-/*.Rcheck/
-
-# RStudio files
-.Rproj.user/
-
-# produced vignettes
-vignettes/*.html
-vignettes/*.pdf
-
-# OAuth2 token, see https://github.com/hadley/httr/releases/tag/v0.3
-.httr-oauth
-
-# knitr and R markdown default cache directories
-*_cache/
-/cache/
-
-# Temporary files created by R markdown
-*.utf8.md
-*.knit.md
-
-# R Environment Variables
-.Renviron
